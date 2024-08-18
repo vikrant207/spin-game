@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7-Section Spin Wheel with Auto-Spin</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .wheel-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, #ffd700, #b8860b, #ffd700);
+            transition: transform 5s ease-out;
+        }
+        text {
+            font-size: 3px;
+            font-weight: bold;
+            fill: gold;
+            text-anchor: middle;
+        }
+        .wheel svg path {
+            stroke: url(#gold-gradient);
+            stroke-width: 0.3;
+        }
+        .pin {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid red;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .buttons-container, .chips-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .bet-button, .chip-button, .multiplier-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.2s ease-in-out;
+        }
+        .bet-button:hover, .chip-button:hover, .multiplier-button:hover {
+            transform: scale(1.1);
+        }
+        .red-button { background-color: red; }
+        .yellow-button { background-color: yellow; color: black; }
+        .blue-button { background-color: blue; }
+        .purple-button { background-color: purple; }
+        .green-button { background-color: green; }
+        .violet-button { background-color: violet; }
+        .orange-button { background-color: orange; }
+        .chip-button {
+            background-color: #444;
+            color: white;
+            margin: 0 5px;
+        }
+        .multiplier-button {
+            background-color: gold;
+            color: black;
+            margin-left: 10px;
+        }
+        .bets-container, .history-container {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .history-container {
+            margin-top: 40px;
+            text-align: left;
+            font-size: 16px;
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wheel-container">
+    <div class="pin"></div>
+    <div class="wheel" id="wheel">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="gold-gradient" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#b8860b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <g transform="translate(16,16)">
+                <!-- Section 1 - Red 2x -->
+                <g transform="rotate(0)">
+                    <path d="M0,0 L16,0 A16,16 0 0,1 8,13.856 Z" fill="red"></path>
+                    <text x="10" y="2" transform="rotate(25.714)">2x</text>
+                </g>
+                <!-- Section 2 - Yellow 2.5x -->
+                <g transform="rotate(51.4286)">
+                    <path d="M0,0 L16,0 A16,16 0 0,1 8,13.856 Z" fill="yellow"></path>
+                    <text x="10" y="2" transform="rotate(25.714)">2.5x</text>
+                </g>
+                <!-- Section 3 - Blue 3x -->
+                <g transform="rotate(102.8572)">
+                    <path d="M0,0 L16,0 A16,16 0 0,1 8,13.856 Z" fill="blue"></path>
+                    <text x="10" y="2" transform="rotate(25.714)">3x</text>
+                </g>
+                <!-- Section 4 - Purple 3.5x -->
+                <g transform="rotate(154.2858)">
+                    <path d="M0,0 L16,0 A16,16 0 0,1 8,13.856 Z" fill="purple"></path>
+                    <text x="10" y="2" transform="rotate(25.714)">3.5x</text>
+                </g>
+                <!-- Section 5 - Green 4x -->
+                <g transform="rotate(205.7144)">
+                    <path d="M0,0 L16,0 A16,16 0 0,1 8,13.856 Z" fill="green"></path>
+                    <text x="10" y="2" transform="rotate(25.714)">4x</text>
+                </g>
+                <!-- Section 6 - Violet 4.5x -->
+                <g transform="rotate(257.143)">
+                    <path d="M0,0 L16,0 A16,16 0 0,1 8,13.856 Z" fill="violet"></path>
+                    <text x="10" y="2" transform="rotate(25.714)">4.5x</text>
+                </g>
+                <!-- Section 7 - Orange 5x -->
+                <g transform="rotate(308.5716)">
+                    <path d="M0,0 L16,0 A16,16 0 0,1 8,13.856 Z" fill="orange"></path>
+                    <text x="10" y="2" transform="rotate(25.714)">5x</text>
+                </g>
+            </g>
+        </svg>
+    </div>
+</div>
+
+<div class="buttons-container">
+    <button class="bet-button red-button" onclick="placeBet('Red', 2)">2x</button>
+    <button class="bet-button yellow-button" onclick="placeBet('Yellow', 2.5)">2.5x</button>
+    <button class="bet-button blue-button" onclick="placeBet('Blue', 3)">3x</button>
+    <button class="bet-button purple-button" onclick="placeBet('Purple', 3.5)">3.5x</button>
+    <button class="bet-button green-button" onclick="placeBet('Green', 4)">4x</button>
+    <button class="bet-button violet-button" onclick="placeBet('Violet', 4.5)">4.5x</button>
+    <button class="bet-button orange-button" onclick="placeBet('Orange', 5)">5x</button>
+</div>
+
+<div class="chips-container">
+    <button class="chip-button" onclick="selectChip(1)">1</button>
+    <button class="chip-button" onclick="selectChip(2)">2</button>
+    <button class="chip-button" onclick="selectChip(5)">5</button>
+    <button class="chip-button" onclick="selectChip(10)">10</button>
+    <button class="chip-button" onclick="selectChip(50)">50</button>
+    <button class="chip-button" onclick="selectChip(100)">100</button>
+    <button class="chip-button" onclick="selectChip(500)">500</button>
+    <button class="chip-button" onclick="selectChip(2500)">2500</button>
+    <button class="chip-button" onclick="selectChip(10000)">10000</button>
+    <button class="multiplier-button" onclick="doubleChip()">2x</button>
+</div>
+
+<div class="bets-container" id="bets-container">
+    <p>No bets placed.</p>
+</div>
+
+<div class="history-container" id="history-container">
+    <h3>Game History</h3>
+    <div id="game-history">
+        <p>No games played yet.</p>
+    </div>
+    <h3>Player History</h3>
+    <div id="player-history">
+        <p>No bets made yet.</p>
+    </div>
+</div>
+
+<script>
+    let selectedChip = 1;
+    let bets = [];
+    let gameHistory = [];
+    let playerHistory = { wins: 0, losses: 0, totalBets: 0, netGain: 0 };
+
+    function selectChip(amount) {
+        selectedChip = amount;
+        alert('Selected chip value: ' + selectedChip);
+    }
+
+    function doubleChip() {
+        selectedChip *= 2;
+        alert('Doubled chip value: ' + selectedChip);
+    }
+
+    function placeBet(color, multiplier) {
+        bets.push({ color: color, multiplier: multiplier, amount: selectedChip });
+        displayBets();
+    }
+
+    function displayBets() {
+        const betsContainer = document.getElementById('bets-container');
+        if (bets.length === 0) {
+            betsContainer.innerHTML = '<p>No bets placed.</p>';
+        } else {
+            betsContainer.innerHTML = '<p>Bets:</p>';
+            bets.forEach(bet => {
+                betsContainer.innerHTML += `<p>${bet.amount} on ${bet.color} (${bet.multiplier}x)</p>`;
+            });
+        }
+    }
+
+    function spinWheel() {
+        const wheel = document.getElementById('wheel');
+        const lowestBet = determineLowestBet();
+        if (!lowestBet) {
+            alert("No bets placed. Please place a bet before spinning.");
+            return;
+        }
+
+        const outcomeDegree = calculateDegreeForOutcome(lowestBet.color);
+        const randomOffset = Math.floor(Math.random() * 20) - 10; // Add randomness
+        const finalDegree = outcomeDegree + randomOffset + 3600; // 10 full rotations
+
+        wheel.style.transform = `rotate(${finalDegree}deg)`;
+
+        setTimeout(() => {
+            updateGameHistory(lowestBet);
+            updatePlayerHistory(lowestBet);
+            resetBets();
+        }, 8000); // Spin for 8 seconds including hold time
+    }
+
+    function determineLowestBet() {
+        if (bets.length === 0) return null;
+        return bets.reduce((lowest, bet) => {
+            const potentialWin = bet.amount * bet.multiplier;
+            return potentialWin < (lowest.amount * lowest.multiplier) ? bet : lowest;
+        });
+    }
+
+    function calculateDegreeForOutcome(color) {
+        switch (color) {
+            case 'Red': return 0;
+            case 'Yellow': return 51.4286;
+            case 'Blue': return 102.8572;
+            case 'Purple': return 154.2858;
+            case 'Green': return 205.7144;
+            case 'Violet': return 257.143;
+            case 'Orange': return 308.5716;
+        }
+    }
+
+    function updateGameHistory(outcome) {
+        gameHistory.push(outcome);
+        displayGameHistory();
+    }
+
+    function displayGameHistory() {
+        const gameHistoryContainer = document.getElementById('game-history');
+        gameHistoryContainer.innerHTML = '<p>Recent Games:</p>';
+        gameHistory.forEach((game, index) => {
+            gameHistoryContainer.innerHTML += `<p>Game ${index + 1}: ${game.color} (${game.multiplier}x)</p>`;
+        });
+    }
+
+    function updatePlayerHistory(outcome) {
+        let totalWin = 0;
+        let totalLoss = 0;
+
+        bets.forEach(bet => {
+            if (bet.color === outcome.color) {
+                const winAmount = bet.amount * bet.multiplier;
+                totalWin += winAmount;
+            } else {
+                totalLoss += bet.amount;
+            }
+        });
+
+        playerHistory.wins += totalWin;
+        playerHistory.losses += totalLoss;
+        playerHistory.totalBets += bets.reduce((sum, bet) => sum + bet.amount, 0);
+        playerHistory.netGain = playerHistory.wins - playerHistory.losses;
+
+        displayPlayerHistory();
+    }
+
+    function displayPlayerHistory() {
+        const playerHistoryContainer = document.getElementById('player-history');
+        playerHistoryContainer.innerHTML = `
+            <p>Total Bets: ${playerHistory.totalBets}</p>
+            <p>Total Wins: ${playerHistory.wins}</p>
+            <p>Total Losses: ${playerHistory.losses}</p>
+            <p>Net Gain/Loss: ${playerHistory.netGain}</p>
+        `;
+    }
+
+    function resetBets() {
+        bets = [];
+        displayBets();
+    }
+
+    // Automatically spin the wheel every 1 minute and 20 seconds
+    function startAutoSpin() {
+        spinWheel(); // Spin immediately on load
+        setInterval(spinWheel, 80000); // Spin every 80 seconds
+    }
+
+    // Start auto spin when the page loads
+    window.onload = startAutoSpin;
+</script>
+
+
+</body>
+</html>
